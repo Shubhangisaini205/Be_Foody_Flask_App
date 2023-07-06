@@ -23,10 +23,11 @@ import {
   NumberInputField,
 } from '@chakra-ui/react';
 import { DeleteIcon, EditIcon, AddIcon } from '@chakra-ui/icons';
-
+import { Chatbot } from '../component/Chatbox';
+const loginUser = JSON.parse(localStorage.getItem("user"))
 function MenuPage() {
   const [menu, setMenu] = useState([]);
-  const [userRole, setUserRole] = useState('Admin');
+  const [userRole, setUserRole] = useState('');
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [selectedDish, setSelectedDish] = useState(null);
@@ -39,16 +40,17 @@ function MenuPage() {
   const [newDishImage, setNewDishImage] = useState('');
   const [newDishId, setNewDishId] = useState(0);
   const toast = useToast();
-
+  console.log(loginUser)
   useEffect(() => {
     fetchMenu();
+    loginUser ? setUserRole(loginUser.role):setUserRole("")
   }, []);
 
   async function fetchMenu() {
     try {
       const response = await fetch('http://localhost:11000/menu');
       const data = await response.json();
-      setMenu(data);
+      setMenu(data.data.menu);
     } catch (error) {
       console.log(error);
     }
@@ -162,6 +164,24 @@ function MenuPage() {
 
   return (
     <Box w="80%" mx="auto" mt={"30px"}>
+           <Text
+      textAlign="left"
+      fontSize="xl"
+      fontWeight="bold"
+      mb={4}
+    >
+      {loginUser ? (
+        <>
+          <Text fontSize="2xl" color="red.600" fontWeight="bold" mb={2}>Get ready to satisfy your cravings, {loginUser.username}!</Text>
+          <Text fontSize="lg" color="gray.600">Welcome to Being Foody. Indulge in our mouthwatering menu.</Text>
+        </>
+      ) : (
+        <>
+          <Text fontSize="2xl" color="teal.500" fontWeight="bold" mb={2}>Ready to embark on a culinary adventure?</Text>
+          <Text fontSize="lg" color="gray.600">Please login to explore our mouthwatering menu!</Text>
+        </>
+      )}
+    </Text>
       <Grid
         templateColumns={{ base: 'repeat(1, 1fr)', md: 'repeat(2, 1fr)', lg: 'repeat(4, 1fr)' }}
         gap={4}
@@ -185,9 +205,9 @@ function MenuPage() {
               {dish.dish_name}
             </Text>
             <Text>₹{dish.price}/-</Text>
-            <Text>{dish.availability === 'YES' ? 'In Stock' : 'Out of Stock'}</Text>
+            <Text>{dish.stock >= 1  ? 'In Stock' : 'Out of Stock'}</Text>
 
-            {userRole === 'Admin' && (
+            {userRole === 'admin' && (
               <HStack mt={4} spacing={2}>
                 <Text>{dish.stock} in Stock</Text>
                 <Button
@@ -200,6 +220,9 @@ function MenuPage() {
             )}
           </Box>
         ))}
+        <Box>
+          
+        </Box>
       </Grid>
 
       {/* Edit Modal */}
@@ -283,9 +306,23 @@ function MenuPage() {
           </ModalFooter>
         </ModalContent>
       </Modal>
+      <Box
+        position="fixed"
+        left={0}
+        bottom={0}
+        width="300px"
+        backgroundColor="transparent"
+        padding={4}
+        boxShadow="lg"
+      >
+        <Chatbot />
+      </Box>
+
+
+
 
       {/* Add Dish Button */}
-      {userRole === 'Admin' && (
+      {userRole === 'admin' && (
         <Button
           colorScheme="teal"
           size="lg"
@@ -298,6 +335,7 @@ function MenuPage() {
           <AddIcon mr={2} /> Add Dish
         </Button>
       )}
+
     </Box>
   );
 }

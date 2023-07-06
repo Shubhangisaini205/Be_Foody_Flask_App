@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Box, Flex, Link, Text, IconButton, Collapse, useDisclosure } from '@chakra-ui/react';
 import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons';
-
+const loginUser = JSON.parse(localStorage.getItem("user"))
 const Navbar = () => {
   const { isOpen, onToggle } = useDisclosure();
   const [isMobileNavVisible, setMobileNavVisible] = useState(false);
@@ -9,7 +9,7 @@ const Navbar = () => {
   const handleToggle = () => {
     setMobileNavVisible(!isMobileNavVisible);
   };
-
+  console.log(loginUser)
   return (
     <Flex
       as="nav"
@@ -24,7 +24,7 @@ const Navbar = () => {
       <Box>
         <Link href="#" _hover={{ textDecoration: 'none' }}>
           <Text fontSize="lg" fontWeight="bold">
-            Be_Foody
+            Be_Foody 🤤🤤
           </Text>
         </Link>
       </Box>
@@ -48,15 +48,23 @@ const Navbar = () => {
         <Link href="/" mr="4" _hover={{ textDecoration: 'none' }}>
           Menu
         </Link>
+        {loginUser ? (
+        <>
+          <Link href="/take-orders" mr="4" _hover={{ textDecoration: 'none' }}>
+          Take Orders
+        </Link>
+
         <Link href="/orders" mr="4" _hover={{ textDecoration: 'none' }}>
           Orders
         </Link>
-        <Link href="/take-orders" mr="4" _hover={{ textDecoration: 'none' }}>
-          Take Orders
-        </Link>
-        <Link href="/all-orders" mr="4" _hover={{ textDecoration: 'none' }}>
+        {loginUser.role === "admin"? <Link href="/all-orders" mr="4" _hover={{ textDecoration: 'none' }}>
           All Orders
-        </Link>
+        </Link>:""}
+        </>
+      ):""}
+        
+       
+        
         <Link href="/login" mr="4" _hover={{ textDecoration: 'none' }}>
           Login
         </Link>
@@ -71,15 +79,21 @@ const Navbar = () => {
           <Link href="/" mr="4" _hover={{ textDecoration: 'none' }}>
             Menu
           </Link>
-          <Link href="/orders" mr="4" _hover={{ textDecoration: 'none' }}>
-            Orders
-          </Link>
+          {loginUser ? (
+        <>
           <Link href="/take-orders" mr="4" _hover={{ textDecoration: 'none' }}>
-            Take Orders
-          </Link>
-          <Link href="/all-orders" mr="4" _hover={{ textDecoration: 'none' }}>
-            All Orders
-          </Link>
+          Take Orders
+        </Link>
+
+        <Link href="/orders" mr="4" _hover={{ textDecoration: 'none' }}>
+          Orders
+        </Link>
+        {loginUser.role === "admin"? <Link href="/all-orders" mr="4" _hover={{ textDecoration: 'none' }}>
+          All Orders
+        </Link>:""}
+        </>
+      ):""}
+        
           <Link href="/login" mr="4" _hover={{ textDecoration: 'none' }}>
             Login
           </Link>

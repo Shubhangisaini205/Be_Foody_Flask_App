@@ -27,8 +27,9 @@ function TakeOrderPage() {
     try {
       const response = await fetch('http://localhost:11000/menu');
       const data = await response.json();
-      const filteredMenu = data.filter((dish) => dish.stock > 0); // Filter out dishes with stock less than 1
+      const filteredMenu = data.data.menu.filter((dish) => dish.stock > 0); // Filter out dishes with stock less than 1
       setMenu(filteredMenu);
+      console.log(data)
     } catch (error) {
       console.log(error);
     }
@@ -69,7 +70,7 @@ function TakeOrderPage() {
       });
 
       const data = await response.json();
-
+     console.log(data)
       if (response.ok) {
         toast({
           title: 'Order Placed',
@@ -78,6 +79,7 @@ function TakeOrderPage() {
           duration: 3000,
           isClosable: true,
         });
+        
         setCustomerName('');
         setSelectedDishes([]);
       } else {
@@ -132,7 +134,7 @@ function TakeOrderPage() {
         ))}
       </Grid>
 
-      <Button colorScheme="blue" mt={4} onClick={placeOrder}>
+      <Button colorScheme="red" mt={4} onClick={placeOrder}>
         Place Order
       </Button>
     </Box>

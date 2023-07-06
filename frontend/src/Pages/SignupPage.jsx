@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { Box, Button, FormControl, FormLabel, Heading, Input, Select } from '@chakra-ui/react';
+import { Box, Button, FormControl, FormLabel, Heading, Input, Select, useToast } from '@chakra-ui/react';
 
 const SignupPage = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [role, setRole] = useState('');
     const [email, setEmail] = useState('');
+    const toast = useToast();
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -23,13 +25,33 @@ const SignupPage = () => {
                 // Signup successful
                 let data = await response.json()
                 console.log(data)
+                toast({
+                    title: 'Signup Successful',
+                    status: 'success',
+                    duration: 3000,
+                    isClosable: true,
+                  });
             } else {
                 // Handle signup error
                 const errorData = await response.json();
                 console.log('Signup error:', errorData.error);
+                toast({
+                    title: 'Signup Error',
+                    description: errorData.error,
+                    status: 'error',
+                    duration: 3000,
+                    isClosable: true,
+                  });
             }
         } catch (error) {
             console.error('Error:', error);
+            toast({
+                title: 'Error',
+                description: error.message,
+                status: 'error',
+                duration: 3000,
+                isClosable: true,
+              });
         }
     };
 
