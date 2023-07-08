@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Table, Thead, Tbody, Tr, Th, Td, Heading, Box, Container, VStack } from '@chakra-ui/react';
-
+const loginUser = JSON.parse(localStorage.getItem("user"))
 function OrdersPage() {
   const [orders, setOrders] = useState([]);
 
@@ -10,7 +10,7 @@ function OrdersPage() {
 
   async function fetchOrders() {
     try {
-      const response = await fetch('http://localhost:11000/review-orders');
+      const response = await fetch(`http://localhost:11000/review-orders?user_id=${loginUser.user_id}&role=${loginUser.role}`);
       const data = await response.json();
       console.log(data);
       setOrders(data.data.orders);
@@ -46,7 +46,6 @@ function OrdersPage() {
               <Tr>
                 <Th color="white">Order ID</Th>
                 <Th color="white">Customer Name</Th>
-                <Th color="white">Dish IDs</Th>
                 <Th color="white">Dish Names</Th>
                 <Th color="white">Total Price</Th>
                 <Th color="white">Status</Th>
@@ -55,23 +54,17 @@ function OrdersPage() {
             <Tbody>
   {orders.map((order) => (
     <Tr key={order.order_id} bg={getStatusColor(order.status)}>
-      <Td>{order.order_id}</Td>
+      <Td>{order.order_id}.</Td>
       <Td>{order.customer_name}</Td>
-      <Td>
-        <VStack align="start" spacing={1}>
-          {order.dish_ids.map((dishId) => (
-            <li key={dishId}>{dishId}</li>
-          ))}
-        </VStack>
-      </Td>
+
       <Td>
         <VStack align="start" spacing={1}>
           {order.name.map((dish) => (
-            <Box key={dish.dish_id}>{dish}</Box>
+            <li key={dish.dish_id}>{dish}</li>
           ))}
         </VStack>
       </Td>
-      <Td>{order.total_price}</Td>
+      <Td>Rs.{order.total_price}/-</Td>
       <Td>{order.status}</Td>
       
     </Tr>

@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { Box, Button, FormControl, FormLabel, Heading, Input, Select, useToast } from '@chakra-ui/react';
-
+import {useNavigate} from "react-router-dom"
 const SignupPage = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [role, setRole] = useState('');
     const [email, setEmail] = useState('');
     const toast = useToast();
+    const navigate = useNavigate()
 
 
     const handleSubmit = async (e) => {
@@ -31,6 +32,7 @@ const SignupPage = () => {
                     duration: 3000,
                     isClosable: true,
                   });
+                  navigate("/login")
             } else {
                 // Handle signup error
                 const errorData = await response.json();

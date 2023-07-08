@@ -13,12 +13,14 @@ import {
   useToast,
 } from '@chakra-ui/react';
 
+const loginUser = JSON.parse(localStorage.getItem('user'));
+
 function TakeOrderPage() {
   const [menu, setMenu] = useState([]);
   const [customerName, setCustomerName] = useState('');
   const [selectedDishes, setSelectedDishes] = useState([]);
   const toast = useToast();
-  console.log(selectedDishes)
+
   useEffect(() => {
     fetchMenu();
   }, []);
@@ -29,7 +31,6 @@ function TakeOrderPage() {
       const data = await response.json();
       const filteredMenu = data.data.menu.filter((dish) => dish.stock > 0); // Filter out dishes with stock less than 1
       setMenu(filteredMenu);
-      console.log(data)
     } catch (error) {
       console.log(error);
     }
@@ -66,11 +67,12 @@ function TakeOrderPage() {
         body: JSON.stringify({
           customer_name: customerName,
           dish_ids: selectedDishes,
+          user_id: loginUser.user_id,
         }),
       });
 
       const data = await response.json();
-     console.log(data)
+
       if (response.ok) {
         toast({
           title: 'Order Placed',
@@ -79,7 +81,7 @@ function TakeOrderPage() {
           duration: 3000,
           isClosable: true,
         });
-        
+
         setCustomerName('');
         setSelectedDishes([]);
       } else {
@@ -104,10 +106,11 @@ function TakeOrderPage() {
   }
 
   return (
-    <Box w="80%" mx="auto">
-      <FormControl mb={4}>
+    <VStack w="90%" p={4} spacing={4} margin={"auto"}>
+      <FormControl>
         <FormLabel htmlFor="customerName">Customer Name</FormLabel>
         <Input
+          alignSelf="center"
           id="customerName"
           placeholder="Enter your name"
           value={customerName}
@@ -115,10 +118,24 @@ function TakeOrderPage() {
         />
       </FormControl>
 
-      <Grid templateColumns="repeat(5, 1fr)" gap={2}>
+      <Grid
+        alignSelf="center"
+        templateColumns={{ base: 'repeat(2, 1fr)', lg: 'repeat(7, 1fr)', md: 'repeat(6, 1fr)', sm: 'repeat(4, 1fr)' }}
+        gap={4}
+      >
         {menu.map((dish) => (
-          <Box key={dish.dish_id} borderWidth="1px" borderRadius="md" p={2}>
-            <Image src={dish.dish_image} alt={dish.dish_name} h={120} objectFit="cover" mb={1} />
+          <Box
+            key={dish.dish_id}
+            borderWidth="1px"
+            borderRadius="md"
+            p={2}
+            gridColumn={{ base: 'span 1', md: 'auto' }}
+
+          >
+            <Box display="flex" justifyContent="center">
+              <Image src={dish.dish_image} alt={dish.dish_name} boxSize={100} objectFit="cover" mb={1} />
+            </Box>
+
             <Text fontWeight="bold" fontSize="md" mt={1}>
               {dish.dish_name}
             </Text>
@@ -137,7 +154,7 @@ function TakeOrderPage() {
       <Button colorScheme="red" mt={4} onClick={placeOrder}>
         Place Order
       </Button>
-    </Box>
+    </VStack>
   );
 }
 

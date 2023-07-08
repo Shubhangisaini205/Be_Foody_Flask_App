@@ -52,10 +52,14 @@ def save_users(users):
 
 
 # Load orders data from MongoDB
-def load_orders():
+def load_orders(user_id = None):
     orders_collection = db["orders"]
-    orders = list(orders_collection.find())
+    if user_id is None:
+        orders = list(orders_collection.find())
+    else:
+        orders = list(orders_collection.find({"user_id": user_id}))
     return orders
+
 
 
 # Save orders data to MongoDB
@@ -99,8 +103,6 @@ def update_dish_stock(dish_ids):
                 menu_dish["stock"] -=1
                 print(dish)
     
-    
-
     save_menu(menu)
  
 def generate_response(data=None, message=None, error=None, status_code=200):
@@ -155,6 +157,7 @@ def take_order():
 
     customer_name = data['customer_name']
     dish_ids = data['dish_ids']
+    user_id = data['user_id']
 
     if not customer_name or not dish_ids:
         return jsonify({'error': 'Incomplete order information'}), 400
@@ -173,7 +176,8 @@ def take_order():
         'order_id': order_id,
         'customer_name': customer_name,
         'dish_ids': dish_ids,
-        'status': 'received'
+        'status': 'received',
+        "user_id":user_id,
     }
     print(new_order)
 
@@ -185,15 +189,26 @@ def take_order():
     # Update the dish stock
     update_dish_stock(dish_ids)
 
-
     return jsonify({'message': 'Order placed successfully'})
 
 
 @app.route('/review-orders')
 def review_orders():
+     # Retrieve the user ID and role from the query parameters
+    user_id = request.args.get('user_id')
+    role = request.args.get('role')
     # Retrieve the orders data
     orders = load_orders()
     menu = load_menu()
+
+# Check if the user is an admin or a regular user
+    if role == 'admin':
+        orders = load_orders()
+    elif role == 'user':
+        orders = load_orders(user_id=user_id)
+    else:
+        return jsonify({'error': 'Invalid role parameter'}), 400
+
 
     # Update each order with dish names and prices
     for order in orders:
@@ -340,7 +355,7 @@ def login():
 
     # Perform login logic here
     print(user)
-    return jsonify({'message': 'Login successful', 'user':{"username":user["username"], "role":user["role"]}})
+    return jsonify({'message': 'Login successful', 'user':{"username":user["username"], "role":user["role"],"user_id":user["user_id"],"email":user["email"]}})
 
 
 

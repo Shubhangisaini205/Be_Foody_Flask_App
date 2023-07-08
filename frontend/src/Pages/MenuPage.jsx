@@ -130,7 +130,7 @@ function MenuPage() {
           dish_id: +newDishId,
           dish_name: newDishName,
           price: newDishPrice,
-          stock: newDishStock,
+          stock: +newDishStock,
           dish_image: newDishImage,
         }),
       });
@@ -178,12 +178,12 @@ function MenuPage() {
       ) : (
         <>
           <Text fontSize="2xl" color="teal.500" fontWeight="bold" mb={2}>Ready to embark on a culinary adventure?</Text>
-          <Text fontSize="lg" color="gray.600">Please login to explore our mouthwatering menu!</Text>
+          <Text fontSize="lg" color="gray.600">Please login to order our mouthwatering menu 🤤😋🤤!</Text>
         </>
       )}
     </Text>
       <Grid
-        templateColumns={{ base: 'repeat(1, 1fr)', md: 'repeat(2, 1fr)', lg: 'repeat(4, 1fr)' }}
+        templateColumns={{ base: 'repeat(1, 1fr)', md: 'repeat(3, 1fr)', lg: 'repeat(4, 1fr)',sm: 'repeat(2, 1fr)' }}
         gap={4}
         justifyContent="center"
       >
@@ -200,7 +200,9 @@ function MenuPage() {
             overflow="hidden"
             position="relative"
           >
-            <Image src={dish.dish_image} alt={dish.dish_name} h={200} objectFit="cover" mb={4} />
+             <Box display="flex" justifyContent="center">
+              <Image src={dish.dish_image} alt={dish.dish_name} width={230} height={230} objectFit="cover" mb={1} />
+            </Box>
             <Text fontWeight="bold" fontSize="xl" whiteSpace="nowrap" overflow="hidden" textOverflow="ellipsis">
               {dish.dish_name}
             </Text>

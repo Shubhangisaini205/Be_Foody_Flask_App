@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Table, Thead, Tbody, Tr, Th, Td, Heading, Box, Container, VStack, Select, Button } from '@chakra-ui/react';
-
+const loginUser = JSON.parse(localStorage.getItem("user"))
 function AllOrdersPage() {
   const [orders, setOrders] = useState([]);
 
@@ -10,7 +10,7 @@ function AllOrdersPage() {
 
   async function fetchOrders() {
     try {
-      const response = await fetch('http://localhost:11000/review-orders');
+      const response = await fetch(`http://localhost:11000/review-orders?user_id=${loginUser.user_id}&role=${loginUser.role}`);
       const data = await response.json();
       console.log(data);
       setOrders(data.data.orders);
